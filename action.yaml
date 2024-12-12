@@ -108,7 +108,7 @@ runs:
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
-       if: inputs.is_tag == 'true' && github.event.repository.name != 'komet'
+       if: inputs.is_tag == 'true' && github.event.repository.name != 'komet_test'
        run: |
             ./mvnw deploy -U\
                   --batch-mode \
