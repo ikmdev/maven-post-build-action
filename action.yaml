@@ -40,6 +40,15 @@ inputs:
   release_notes:
     description: "Release Notes"
     required: false
+  repo_name: 
+    description: "Repo Name"
+    required: true
+  branch_name: 
+    description: "Branch Name" 
+    required: true 
+  ikmdevops_pat:
+    description: "PAT TOKEN for IKMDevops User"
+    required: true
 
 outputs:
   release_upload_url:
@@ -52,6 +61,9 @@ runs:
   steps:
      - name: Checkout Repository
        uses: actions/checkout@v4
+       with:
+         repository: ${{inputs.repo_name}}
+         ref: ${{inputs.branch_name}}
     
      - name: Setup Java
        uses: actions/setup-java@v4
