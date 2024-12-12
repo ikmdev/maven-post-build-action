@@ -96,7 +96,7 @@ runs:
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
-       if: inputs.is_tag
+       if: inputs.is_tag == 'true'
        run: |
             ./mvnw deploy -U\
                   --batch-mode \
@@ -118,13 +118,13 @@ runs:
 
      - name: Create Release
        id: create_release
-       if: inputs.is_tag
+       if: inputs.is_tag == 'true'
        uses: actions/create-release@v1
        env:
           GITHUB_TOKEN: ${{ inputs.github_token }}
        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+          tag_name: ${{ inputs.branch_name }}
+          release_name: Release ${{ inputs.branch_name }}
           body: |
             ${{inputs.release_notes}}
           draft: false
