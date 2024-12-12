@@ -108,7 +108,7 @@ runs:
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
-       if: inputs.is_tag == 'true'
+       if: inputs.is_tag == 'test'
        run: |
             ./mvnw deploy -U\
                   --batch-mode \
