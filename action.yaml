@@ -131,7 +131,7 @@ runs:
      - name: Create Release
        id: create_release
        if: inputs.is_tag == 'true'
-       uses: comnoco/create-release@v2
+       uses: mcomnoco/create-release-action@v2.0.5
        env:
           GITHUB_TOKEN: ${{ inputs.github_token }}
        with:
