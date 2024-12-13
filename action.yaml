@@ -76,11 +76,34 @@ runs:
             gpg-private-key: ${{inputs.gpg_key}}
             gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
+     - name: Extract Version
+       id: get_current_version
+       shell: bash
+       run: |
+          echo "POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+
+     - name: Check if IS_SNAPSHOT
+       id: is_snapshot
+       shell: bash
+       run: |
+            if [ $IS_SNAPSHOT == 'true' ]; then
+             echo "NEXUS_REPO_ID=maven-snapshots">> $GITHUB_OUTPUT
+            elif [ $IS_SNAPSHOT == 'false' ]; then
+             echo "NEXUS_REPO_ID=maven-releases">> $GITHUB_OUTPUT
+            else
+             echo "ERROR: Incorrect Type $IS_SNAPSHOT"
+             exit 1
+            echo "IS_SNAPSHOT_VERSION=$IS_SNAPSHOT" >> $GITHUB_OUTPUT
+            fi
+       env:
+         IS_SNAPSHOT:  ${{ contains(steps.get_current_version.outputs.POM_VERSION, '-SNAPSHOT')}}
+       
+
      - name: Maven Settings File
        uses: whelk-io/maven-settings-xml-action@v22
        with:
-        servers: '[{"id": "${{ inputs.nexus_repo_id }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}]'
-        profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  inputs.nexus_repo_id }}::${{ inputs.nexus_repo_url }}/repository/${{ inputs.nexus_repo_id }}"}}]'
+        servers: '[{"id": "${{ steps.is_snapshot.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}]'
+        profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_snapshot.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_snapshot.outputs.NEXUS_REPO_ID  }}"}}]'
         active_profiles: '["${{inputs.nexus_profile}}"]' 
         output_file: .m2/settings.xml
 
@@ -104,11 +127,11 @@ runs:
             -DskipTests \
             -DskipITs \
             -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
-            -DrepositoryId='${{ inputs.nexus_repo_id }}'
+            -DrepositoryId='${{ steps.is_snapshot.outputs.NEXUS_REPO_ID  }}'
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
-       if: inputs.is_tag == 'true' && github.event.repository.name != 'komet_test'
+       if: steps.is_snapshot.outputs.IS_SNAPSHOT_VERSION == 'false' && github.event.repository.name != 'komet_test'
        run: |
             ./mvnw deploy -U\
                   --batch-mode \
@@ -130,7 +153,7 @@ runs:
 
      - name: Create Release
        id: create_release
-       if: inputs.is_tag == 'true'
+       if: steps.is_snapshot.outputs.IS_SNAPSHOT_VERSION == 'false'
        uses: comnoco/create-release-action@v2.0.5
        env:
           GITHUB_TOKEN: ${{ inputs.github_token }}
