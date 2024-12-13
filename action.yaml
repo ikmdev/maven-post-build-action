@@ -83,6 +83,7 @@ runs:
        id: is_snapshot
        shell: bash
        run: |
+            echo "IS_SNAPSHOT_VERSION=$IS_SNAPSHOT" >> $GITHUB_OUTPUT
             if [ $IS_SNAPSHOT == 'true' ]; then
              echo "NEXUS_REPO_ID=maven-snapshots">> $GITHUB_OUTPUT
             elif [ $IS_SNAPSHOT == 'false' ]; then
@@ -90,7 +91,6 @@ runs:
             else
              echo "ERROR: Incorrect Type $IS_SNAPSHOT"
              exit 1
-            echo "IS_SNAPSHOT_VERSION=$IS_SNAPSHOT" >> $GITHUB_OUTPUT
             fi
        env:
          IS_SNAPSHOT:  ${{ contains(steps.get_current_version.outputs.POM_VERSION, '-SNAPSHOT')}}
