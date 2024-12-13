@@ -51,6 +51,9 @@ outputs:
   release_upload_url:
     description: "Release Url"
     value: ${{ steps.create_release.outputs.upload_url }}
+  is_snapshot_version:
+     description: "Is Snapshot Version"
+     value: ${{ steps.is_snapshot.outputs.IS_SNAPSHOT_VERSION }}
 
 
 runs:
