@@ -59,11 +59,11 @@ outputs:
 runs:
   using: "composite"
   steps:
-     - name: Checkout Repository
-       uses: actions/checkout@v4
-       with:
-         repository: ${{inputs.repo_name}}
-         ref: ${{inputs.branch_name}}
+     # - name: Checkout Repository
+     #   uses: actions/checkout@v4
+     #   with:
+     #     repository: ${{inputs.repo_name}}
+     #     ref: ${{inputs.branch_name}}
     
      - name: Setup Java
        uses: actions/setup-java@v4
