@@ -136,7 +136,6 @@ runs:
             -Prelease-enforcement
 
      - name: SonarCloud Build and analyze
-       if: github.repository_owner == 'ikmdev'
        shell: bash  
        run: | 
            ./mvnw verify sonar:sonar \
