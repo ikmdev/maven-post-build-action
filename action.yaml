@@ -107,8 +107,10 @@ runs:
             echo "IS_SNAPSHOT_VERSION=$IS_SNAPSHOT" >> $GITHUB_OUTPUT
             if [ $IS_SNAPSHOT == 'true' ]; then
              echo "NEXUS_REPO_ID=maven-snapshots">> $GITHUB_OUTPUT
+             echo "RELEASE_ENFORCEMENT=release-enforcement" >> $GITHUB_OUTPUT
             elif [ $IS_SNAPSHOT == 'false' ]; then
              echo "NEXUS_REPO_ID=maven-releases">> $GITHUB_OUTPUT
+             echo "RELEASE_ENFORCEMENT=" >> $GITHUB_OUTPUT
             else
              echo "ERROR: Incorrect Type $IS_SNAPSHOT"
              exit 1
@@ -133,7 +135,7 @@ runs:
             -e \
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -Dmaven.build.cache.enabled=false \
-            -Prelease-enforcement
+            -P${{  steps.is_snapshot.outputs.RELEASE_ENFORCEMENT  }}
 
      - name: SonarCloud Build and analyze
        shell: bash  
