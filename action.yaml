@@ -40,9 +40,6 @@ inputs:
   branch_name: 
     description: "Branch Name" 
     required: true 
-  ikmdevops_pat:
-    description: "PAT TOKEN for IKMDevops User"
-    required: true
 
 outputs:
   release_upload_url:
