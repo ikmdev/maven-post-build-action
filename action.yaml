@@ -40,6 +40,36 @@ inputs:
   branch_name: 
     description: "Branch Name" 
     required: true 
+    sonarcloud_token:
+    description: "Token For Sonarcloud"
+    required: false
+  sonarcloud_host_url:     
+    description: "Sonarcloud Host URL"
+    required: false
+    default: 'https://sonarcloud.io/'
+  sonarcloud_organization:
+    description: "Organization Name on Sonarcloud "
+    required: false
+    default: 'ikmdev'
+  sonarcloud_sources:
+    description: "source folder"
+    required: false
+    default: 'src/main/java'
+  sonarcloud_projectKey:
+    description: "Sonar project key"
+    required: false
+  sonarcloud_coverage_jacoco_xmlReportPaths:
+    description: "Jacoco reports path"
+    required: false
+    default: 'target/site/jacoco/jacoco.xml'
+  sonarcloud_java_binaries:
+    description: "Java binaries folder"
+    required: false      
+    default: 'target/classes'   
+  sonarcloud_tests:
+    description: "Java test folder"
+    required: false
+    default: 'src/test/java'
 
 outputs:
   release_upload_url:
@@ -103,7 +133,26 @@ runs:
             -e \
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -Dmaven.build.cache.enabled=false \
-            -Prelease-enforcment
+            -Prelease-enforcement
+
+     - name: SonarCloud Build and analyze
+       if: github.repository_owner == 'ikmdev'
+       shell: bash  
+       run: | 
+           ./mvnw verify sonar:sonar \
+             --batch-mode \
+             -Dsonar.sonarcloud_token=${{ inputs.sonarcloud_token }} \
+             -Dsonar.organization=${{ github.repository_owner }} \
+             -Dsonar.sonarcloud_host_url=${{ inputs.sonarcloud_host_url }} \
+             -Dsonar.sources=${{ inputs.sonarcloud_sources }} \
+             -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} \
+             -Dsonar.coverage.jacoco.xmlReportPaths=${{ inputs.sonarcloud_coverage_jacoco_xmlReportPaths }} \
+             -Dsonar.java.binaries=${{ inputs.sonarcloud_java_binaries }} \
+             -Dsonar.tests=${{ inputs.sonarcloud_tests }}
+      env:
+        SONAR_TOKEN: ${{ inputs.sonarcloud_token }}
+        SONAR_HOST_URL: ${{ inputs.sonarcloud_host_url }}
+        SONAR_ORGANIZATION: ${{ github.repository_owner }} 
 
      - name: Deploy To Nexus
        shell: bash
