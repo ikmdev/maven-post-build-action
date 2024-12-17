@@ -40,7 +40,7 @@ inputs:
   branch_name: 
     description: "Branch Name" 
     required: true 
-    sonarcloud_token:
+  sonarcloud_token:
     description: "Token For Sonarcloud"
     required: false
   sonarcloud_host_url:     
