@@ -135,7 +135,7 @@ runs:
             -e \
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -Dmaven.build.cache.enabled=false \
-           
+            ${{  steps.is_snapshot.outputs.RELEASE_ENFORCEMENT  }}
 
      - name: SonarCloud Build and analyze
        shell: bash  
