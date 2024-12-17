@@ -37,9 +37,6 @@ inputs:
   ossrh_token:
     description: "OSSRH Token"
     required: true
-  repo_name: 
-    description: "Repo Name"
-    required: true
   branch_name: 
     description: "Branch Name" 
     required: true 
