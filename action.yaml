@@ -148,7 +148,7 @@ runs:
              -Dsonar.coverage.jacoco.xmlReportPaths=${{ inputs.sonarcloud_coverage_jacoco_xmlReportPaths }} \
              -Dsonar.java.binaries=${{ inputs.sonarcloud_java_binaries }} \
              -Dsonar.tests=${{ inputs.sonarcloud_tests }}
-      env:
+       env:
         SONAR_TOKEN: ${{ inputs.sonarcloud_token }}
         SONAR_HOST_URL: ${{ inputs.sonarcloud_host_url }}
         SONAR_ORGANIZATION: ${{ github.repository_owner }} 
