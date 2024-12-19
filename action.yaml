@@ -127,6 +127,7 @@ runs:
            echo "IKM_TRIGGER=true" >> $GITHUB_OUTPUT
          else
            echo "IKM_TRIGGER=false" >> $GITHUB_OUTPUT
+         fi
        env:
          REPOSITORY_OWNER: ${{github.repository_owner}}
          TRIGGER_USER: ${{github.event.workflow_run.head_repository.owner.login}}
