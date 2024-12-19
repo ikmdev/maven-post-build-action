@@ -129,7 +129,7 @@ runs:
            echo "IKM_TRIGGER=false" >> $GITHUB_OUTPUT
        env:
          REPOSITORY_OWNER: ${{github.repository_owner}}
-         TRIGGER_USER: ${{github.repository.owner.login}}
+         TRIGGER_USER: ${{github.event.repository.owner.login}}
         
 
      - name: Maven Settings File
