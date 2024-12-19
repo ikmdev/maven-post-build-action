@@ -118,9 +118,11 @@ runs:
 
      - name: Validate If Triggered By IKMDEV
        id: triggered_by_ikm
+       shell: bash
        run: |
          echo "Repo Owner: ${REPOSITORY_OWNER}"
          echo "Trigger User: ${TRIGGER_USER}"
+         
          if [ $REPOSITORY_OWNER == $TRIGGER_USER ]; then
            echo "IKM_TRIGGER=true" >> $GITHUB_OUTPUT
          else
