@@ -180,7 +180,7 @@ runs:
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
-       if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && github.event.repository.name != 'komet_test' 
+       if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && !contains(github.event.repository.name, 'komet')
        run: |
             ./mvnw deploy -U\
                   --batch-mode \
