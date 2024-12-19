@@ -94,17 +94,18 @@ runs:
             gpg-private-key: ${{inputs.gpg_key}}
             gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-
-      - name: Check for Tag
-        run: |
-          if git show-ref --tags --verify --quiet "refs/tags/${HEAD_BRANCH}"; then
+     - name: Check For Tag
+       id: is_tag
+       shell: bash
+       run: |
+         if git show-ref --tags --verify --quiet "refs/tags/${HEAD_BRANCH}"; then
             echo "Tag ${HEAD_BRANCH} exists"
             exit 1
           else
             echo "Tag ${HEAD_BRANCH} does not exist"
             exit 1
           fi
-        env:
+       env:
          HEAD_BRANCH: ${{github.event.workflow_run.head_branch}}
 
      - name: Extract Version
