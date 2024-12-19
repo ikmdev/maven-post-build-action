@@ -94,9 +94,9 @@ runs:
             gpg-private-key: ${{inputs.gpg_key}}
             gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-     # - name: GitHub Context
-     #   shell: bash
-     #   run: echo ${{toJson(github)}}
+     - name: GitHub Context
+       shell: bash
+       run: echo ${{toJson(github.event)}}
 
      - name: Check For Tag
        id: is_tag
@@ -129,7 +129,7 @@ runs:
            echo "IKM_TRIGGER=false" >> $GITHUB_OUTPUT
        env:
          REPOSITORY_OWNER: ${{github.repository_owner}}
-         TRIGGER_USER: ${{github.event.repository.owner.login}}
+         TRIGGER_USER: ${{github.event.head_repository.owner.login}}
         
 
      - name: Maven Settings File
