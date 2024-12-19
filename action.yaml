@@ -140,8 +140,9 @@ runs:
      - name: Maven Build
        shell: bash
        run: |
-          ./mvnw clean install -U \
+          ./mvnw clean install\
             --batch-mode \
+            -U \
             -e \
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -Dmaven.build.cache.enabled=false \
@@ -153,6 +154,7 @@ runs:
        run: | 
            ./mvnw verify sonar:sonar \
              --batch-mode \
+             -Dmaven.build.cache.enabled=false \
              -Dsonar.sonarcloud_token=${{ inputs.sonarcloud_token }} \
              -Dsonar.organization=${{ github.repository_owner }} \
              -Dsonar.sonarcloud_host_url=${{ inputs.sonarcloud_host_url }} \
@@ -183,7 +185,7 @@ runs:
        shell: bash
        if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && !contains(github.event.repository.name, 'komet')
        run: |
-            ./mvnw deploy -U\
+            ./mvnw deploy \
                   --batch-mode \
                   -e \
                   -U \
