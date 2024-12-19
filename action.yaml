@@ -94,9 +94,9 @@ runs:
             gpg-private-key: ${{inputs.gpg_key}}
             gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-     - name: GitHub Context
-       shell: bash
-       run: echo ${{toJson(github.event)}}
+    #  - name: GitHub Context
+    #    shell: bash
+    #    run: echo ${{toJson(github.event)}}
 
      - name: Check For Tag
        id: is_tag
