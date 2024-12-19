@@ -122,14 +122,14 @@ runs:
        run: |
          echo "Repo Owner: ${REPOSITORY_OWNER}"
          echo "Trigger User: ${TRIGGER_USER}"
-         
+
          if [ $REPOSITORY_OWNER == $TRIGGER_USER ]; then
            echo "IKM_TRIGGER=true" >> $GITHUB_OUTPUT
          else
            echo "IKM_TRIGGER=false" >> $GITHUB_OUTPUT
        env:
          REPOSITORY_OWNER: ${{github.repository_owner}}
-         TRIGGER_USER: ${{github.owner.login}}
+         TRIGGER_USER: ${{github.owner.repository.login}}
         
 
      - name: Maven Settings File
