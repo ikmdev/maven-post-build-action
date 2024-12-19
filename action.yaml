@@ -75,9 +75,9 @@ outputs:
   release_upload_url:
     description: "Release Url"
     value: ${{ steps.create_release.outputs.upload_url }}
-  is_snapshot_version:
-     description: "Is Snapshot Version"
-     value: ${{ steps.is_snapshot.outputs.IS_SNAPSHOT_VERSION }}
+  is_tag:
+     description: "Is Tag"
+     value: ${{ steps.is_tag.outputs.IS_TAG }}
 
 
 runs:
@@ -100,44 +100,24 @@ runs:
        run: |
          if git show-ref --tags --verify --quiet "refs/tags/${HEAD_BRANCH}"; then
             echo "Tag ${HEAD_BRANCH} exists"
-            exit 1
+            echo "NEXUS_REPO_ID=maven-releases">> $GITHUB_OUTPUT
+            echo "RELEASE_ENFORCEMENT=-Prelease-enforcement" >> $GITHUB_OUTPUT
+            echo "IS_TAG=true" >> $GITHUB_OUTPUT
           else
             echo "Tag ${HEAD_BRANCH} does not exist"
-            exit 1
+            echo "NEXUS_REPO_ID=maven-snapshots">> $GITHUB_OUTPUT
+            echo "RELEASE_ENFORCEMENT=" >> $GITHUB_OUTPUT
+            echo "IS_TAG=false" >> $GITHUB_OUTPUT
           fi
        env:
-         HEAD_BRANCH: ${{github.event.workflow_run.head_branch}}
-
-     - name: Extract Version
-       id: get_current_version
-       shell: bash
-       run: |
-          echo "POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
-
-     - name: Check if IS_SNAPSHOT
-       id: is_snapshot
-       shell: bash
-       run: |
-            echo "IS_SNAPSHOT_VERSION=$IS_SNAPSHOT" >> $GITHUB_OUTPUT
-            if [ $IS_SNAPSHOT == 'true' ]; then
-             echo "NEXUS_REPO_ID=maven-snapshots">> $GITHUB_OUTPUT
-             echo "RELEASE_ENFORCEMENT=" >> $GITHUB_OUTPUT
-            elif [ $IS_SNAPSHOT == 'false' ]; then
-             echo "NEXUS_REPO_ID=maven-releases">> $GITHUB_OUTPUT
-             echo "RELEASE_ENFORCEMENT=-Prelease-enforcement" >> $GITHUB_OUTPUT
-            else
-             echo "ERROR: Incorrect Type $IS_SNAPSHOT"
-             exit 1
-            fi
-       env:
-         IS_SNAPSHOT:  ${{ contains(steps.get_current_version.outputs.POM_VERSION, '-SNAPSHOT')}}
+         HEAD_BRANCH: ${{ inputs.branch_name }}
        
 
      - name: Maven Settings File
        uses: whelk-io/maven-settings-xml-action@v22
        with:
-        servers: '[{"id": "${{ steps.is_snapshot.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}]'
-        profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_snapshot.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_snapshot.outputs.NEXUS_REPO_ID  }}"}}]'
+        servers: '[{"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}]'
+        profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_tag.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}"}}]'
         active_profiles: '["${{inputs.nexus_profile}}"]' 
         output_file: .m2/settings.xml
 
@@ -150,7 +130,7 @@ runs:
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -Dmaven.build.cache.enabled=false \
             -PcodeQuality \
-            ${{  steps.is_snapshot.outputs.RELEASE_ENFORCEMENT  }}
+            ${{  steps.is_tag.outputs.RELEASE_ENFORCEMENT  }}
 
      - name: SonarCloud Build and analyze
        shell: bash  
@@ -180,11 +160,11 @@ runs:
             -DskipTests \
             -DskipITs \
             -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
-            -DrepositoryId='${{ steps.is_snapshot.outputs.NEXUS_REPO_ID  }}'
+            -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}'
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
-       if: steps.is_snapshot.outputs.IS_SNAPSHOT_VERSION == 'false' && github.event.repository.name != 'komet_test'
+       if: steps.is_tag.outputs.IS_TAG == 'true' && github.event.repository.name != 'komet_test'
        run: |
             ./mvnw deploy -U\
                   --batch-mode \
@@ -206,7 +186,7 @@ runs:
 
      - name: Create Release
        id: create_release
-       if: steps.is_snapshot.outputs.IS_SNAPSHOT_VERSION == 'false'
+       if: steps.is_tag.outputs.IS_TAG == 'true'
        uses: comnoco/create-release-action@v2.0.5
        env:
           GITHUB_TOKEN: ${{ inputs.github_token }}
