@@ -94,9 +94,9 @@ runs:
             gpg-private-key: ${{inputs.gpg_key}}
             gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-     - name: GitHub Context
-       shell: bash
-       run: echo ${{toJson(github)}}
+     # - name: GitHub Context
+     #   shell: bash
+     #   run: echo ${{toJson(github)}}
 
      - name: Check For Tag
        id: is_tag
@@ -115,7 +115,20 @@ runs:
           fi
        env:
          HEAD_BRANCH: ${{ inputs.branch_name }}
-       
+
+     - name: Validate If Triggered By IKMDEV
+       id: triggered_by_ikm
+       run: |
+         echo "Repo Owner: ${REPOSITORY_OWNER}"
+         echo "Trigger User: ${TRIGGER_USER}"
+         if [ $REPOSITORY_OWNER == $TRIGGER_USER ]; then
+           echo "IKM_TRIGGER=true" >> $GITHUB_OUTPUT
+         else
+           echo "IKM_TRIGGER=false" >> $GITHUB_OUTPUT
+       env:
+         REPOSITORY_OWNER: ${{github.repository_owner}}
+         TRIGGER_USER: ${{github.owner.login}}
+        
 
      - name: Maven Settings File
        uses: whelk-io/maven-settings-xml-action@v22
@@ -168,7 +181,7 @@ runs:
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
-       if: steps.is_tag.outputs.IS_TAG == 'true' && github.event.repository.name != 'komet_test'
+       if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && github.event.repository.name != 'komet_test' 
        run: |
             ./mvnw deploy -U\
                   --batch-mode \
@@ -190,7 +203,7 @@ runs:
 
      - name: Create Release
        id: create_release
-       if: steps.is_tag.outputs.IS_TAG == 'true'
+       if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true'
        uses: comnoco/create-release-action@v2.0.5
        env:
           GITHUB_TOKEN: ${{ inputs.github_token }}
