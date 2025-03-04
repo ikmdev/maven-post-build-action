@@ -137,7 +137,7 @@ runs:
        uses: whelk-io/maven-settings-xml-action@v22
        with:
         servers: '[{"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}]'
-        profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_tag.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}"}}]'
+        profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_tag.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}/"}}]'
         active_profiles: '["${{inputs.nexus_profile}}"]' 
         output_file: .m2/settings.xml
 
@@ -185,40 +185,40 @@ runs:
             -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
             -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}'
     
-     - name: Publish To OSSRH (Maven Central Staging)
-       shell: bash
-       if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && !contains(github.event.repository.name, 'komet')
-       run: |
-            ./mvnw deploy \
-                  --batch-mode \
-                  -e \
-                  -U \
-                  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-                  -DskipTests \
-                  -DskipITs \
-                  -Dmaven.main.skip \
-                  -Dmaven.test.skip \
-                  -DrepositoryId=ossrh \
-                  -DrepositoryIdOSSRH='true' \
-                  -PstageOSSRH \
-                  -Dmaven.build.cache.enabled=false
-       env:
-          MAVEN_USERNAME: ${{ inputs.ossrh_username }}
-          MAVEN_CENTRAL_TOKEN: ${{ inputs.ossrh_token }}
-          MAVEN_GPG_PASSPHRASE: ${{ inputs.gpg_passphrase }}
+     # - name: Publish To OSSRH (Maven Central Staging)
+     #   shell: bash
+     #   if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && !contains(github.event.repository.name, 'komet')
+     #   run: |
+     #        ./mvnw deploy \
+     #              --batch-mode \
+     #              -e \
+     #              -U \
+     #              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+     #              -DskipTests \
+     #              -DskipITs \
+     #              -Dmaven.main.skip \
+     #              -Dmaven.test.skip \
+     #              -DrepositoryId=ossrh \
+     #              -DrepositoryIdOSSRH='true' \
+     #              -PstageOSSRH \
+     #              -Dmaven.build.cache.enabled=false
+     #   env:
+     #      MAVEN_USERNAME: ${{ inputs.ossrh_username }}
+     #      MAVEN_CENTRAL_TOKEN: ${{ inputs.ossrh_token }}
+     #      MAVEN_GPG_PASSPHRASE: ${{ inputs.gpg_passphrase }}
 
-     - name: Create Release
-       id: create_release
-       if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true'
-       uses: comnoco/create-release-action@v2.0.5
-       env:
-          GITHUB_TOKEN: ${{ inputs.github_token }}
-       with:
-          tag_name: ${{ inputs.branch_name }}
-          release_name: Release ${{ inputs.branch_name }}
-          body: |
-            Release ${{ inputs.branch_name }}
-          draft: false
-          prerelease: false
+     # - name: Create Release
+     #   id: create_release
+     #   if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true'
+     #   uses: comnoco/create-release-action@v2.0.5
+     #   env:
+     #      GITHUB_TOKEN: ${{ inputs.github_token }}
+     #   with:
+     #      tag_name: ${{ inputs.branch_name }}
+     #      release_name: Release ${{ inputs.branch_name }}
+     #      body: |
+     #        Release ${{ inputs.branch_name }}
+     #      draft: false
+     #      prerelease: false
 
      
