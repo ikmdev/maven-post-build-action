@@ -72,8 +72,12 @@ inputs:
     default: 'src/test/java'
   java_version:
     description: "Java Version"
-    required: false 
+    required: false
     default: "23"
+  mvn_additional_args:
+    description: "Additional Maven CLI args (no new lines)"
+    required: false
+    default: ""
 
 outputs:
   release_upload_url:
@@ -152,7 +156,8 @@ runs:
             -Dmaven.build.cache.enabled=false \
             -PcodeQuality \
             -PgenerateData \
-            ${{  steps.is_tag.outputs.RELEASE_ENFORCEMENT  }}
+            ${{  steps.is_tag.outputs.RELEASE_ENFORCEMENT  }} \
+            ${{ inputs.mvn_additional_args }}
 
      - name: SonarCloud Build and analyze
        shell: bash  
@@ -167,7 +172,8 @@ runs:
              -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} \
              -Dsonar.coverage.jacoco.xmlReportPaths=${{ inputs.sonarcloud_coverage_jacoco_xmlReportPaths }} \
              -Dsonar.java.binaries=${{ inputs.sonarcloud_java_binaries }} \
-             -Dsonar.tests=${{ inputs.sonarcloud_tests }}
+             -Dsonar.tests=${{ inputs.sonarcloud_tests }} \
+             ${{ inputs.mvn_additional_args }}
        env:
         SONAR_TOKEN: ${{ inputs.sonarcloud_token }}
         SONAR_HOST_URL: ${{ inputs.sonarcloud_host_url }}
@@ -184,7 +190,8 @@ runs:
             -DskipTests \
             -DskipITs \
             -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
-            -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}'
+            -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}' \
+            ${{ inputs.mvn_additional_args }}
     
      - name: Publish To OSSRH (Maven Central Staging)
        shell: bash
@@ -202,7 +209,8 @@ runs:
                   -DrepositoryId=ossrh \
                   -DrepositoryIdOSSRH='true' \
                   -PstageOSSRH \
-                  -Dmaven.build.cache.enabled=false
+                  -Dmaven.build.cache.enabled=false \
+                  ${{ inputs.mvn_additional_args }}
        env:
           MAVEN_USERNAME: ${{ inputs.ossrh_username }}
           MAVEN_CENTRAL_TOKEN: ${{ inputs.ossrh_token }}
@@ -221,5 +229,3 @@ runs:
             Release ${{ inputs.branch_name }}
           draft: false
           prerelease: false
-
-     
