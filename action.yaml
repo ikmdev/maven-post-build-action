@@ -150,9 +150,9 @@ runs:
             -e \
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -Dmaven.build.cache.enabled=false \
-						-PcodeQuality \
-						-PgenerateData \
-						${{  steps.is_tag.outputs.RELEASE_ENFORCEMENT  }}
+            -PcodeQuality \
+            -PgenerateData \
+            ${{  steps.is_tag.outputs.RELEASE_ENFORCEMENT  }}
 
      - name: SonarCloud Build and analyze
        shell: bash  
