@@ -206,7 +206,7 @@ runs:
                   -DskipITs \
                   -Dmaven.main.skip \
                   -Dmaven.test.skip \
-                  -DrepositoryId=ossrh \
+                  -DrepositoryId=central \
                   -DrepositoryIdOSSRH='true' \
                   -PstageOSSRH \
                   -Dmaven.build.cache.enabled=false \
