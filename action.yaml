@@ -140,7 +140,7 @@ runs:
      - name: Maven Settings File
        uses: whelk-io/maven-settings-xml-action@v22
        with:
-        servers: '[{"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}, {"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{ inputs.ossrh_username }}", "password": "${{ inputs.ossrh_token }}"} ]'
+        servers: '[{"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}, {"id": "central", "username": "${{ inputs.ossrh_username }}", "password": "${{ inputs.ossrh_token }}"} ]'
         profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_tag.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}"}}]'
         active_profiles: '["${{inputs.nexus_profile}}"]' 
         output_file: .m2/settings.xml
