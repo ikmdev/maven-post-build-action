@@ -31,11 +31,11 @@ inputs:
   gpg_key:
     description: "GPG Key"
     required: true
-  ossrh_username:
-    description: "OSSRH USERNAME"
+  maven_central_username:
+    description: "MAVEN CENTRAL USERNAME"
     required: true
-  ossrh_token:
-    description: "OSSRH Token"
+  maven_central_password:
+    description: "MAVEN CENTRAL PASSWORD"
     required: true
   branch_name: 
     description: "Branch Name" 
@@ -96,7 +96,7 @@ runs:
        with:
             distribution: 'zulu'
             java-version: ${{inputs.java_version}}
-            server-id: ossrh
+            server-id: central
             server-username: MAVEN_USERNAME
             server-password: MAVEN_CENTRAL_TOKEN
             gpg-private-key: ${{inputs.gpg_key}}
@@ -206,14 +206,14 @@ runs:
                   -DskipITs \
                   -Dmaven.main.skip \
                   -Dmaven.test.skip \
-                  -DrepositoryId=ossrh \
-                  -DrepositoryIdOSSRH='true' \
-                  -PstageOSSRH \
+                  -DrepositoryId=central \
+                  -DrepositoryIdCentralRepository='true' \
+                  -PstageMavenCentralRepository \
                   -Dmaven.build.cache.enabled=false \
                   ${{ inputs.mvn_additional_args }}
        env:
-          MAVEN_USERNAME: ${{ inputs.ossrh_username }}
-          MAVEN_CENTRAL_TOKEN: ${{ inputs.ossrh_token }}
+          MAVEN_USERNAME: ${{ inputs.maven_central_username}}
+          MAVEN_CENTRAL_TOKEN: ${{ inputs.maven_central_password }}
           MAVEN_GPG_PASSPHRASE: ${{ inputs.gpg_passphrase }}
 
      - name: Create Release
