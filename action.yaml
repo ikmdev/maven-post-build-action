@@ -193,7 +193,7 @@ runs:
             -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}' \
             ${{ inputs.mvn_additional_args }}
     
-     - name: Publish To OSSRH (Maven Central Staging)
+     - name: Publish To Maven Central Staging
        shell: bash
        if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && !contains(github.event.repository.name, 'komet')
        run: |
