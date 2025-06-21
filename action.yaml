@@ -96,7 +96,7 @@ runs:
        with:
             distribution: 'zulu'
             java-version: ${{inputs.java_version}}
-            server-id: ossrh
+            server-id: central
             server-username: MAVEN_USERNAME
             server-password: MAVEN_CENTRAL_TOKEN
             gpg-private-key: ${{inputs.gpg_key}}
@@ -210,11 +210,10 @@ runs:
                   -DrepositoryIdCentralRepository='true' \
                   -PstageMavenCentralRepository \
                   -Dmaven.build.cache.enabled=false \
-                  -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
                   ${{ inputs.mvn_additional_args }}
        env:
-          MAVEN_USERNAME: ${{ inputs.ossrh_username }}
-          MAVEN_CENTRAL_TOKEN: ${{ inputs.ossrh_token }}
+          MAVEN_USERNAME: ${{ inputs.maven_central_username}}
+          MAVEN_CENTRAL_TOKEN: ${{ inputs.maven_central_password }}
           MAVEN_GPG_PASSPHRASE: ${{ inputs.gpg_passphrase }}
 
      - name: Create Release
