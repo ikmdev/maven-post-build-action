@@ -210,6 +210,7 @@ runs:
                   -DrepositoryIdOSSRH='true' \
                   -PstageOSSRH \
                   -Dmaven.build.cache.enabled=false \
+                  -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
                   ${{ inputs.mvn_additional_args }}
        env:
           MAVEN_USERNAME: ${{ inputs.ossrh_username }}
