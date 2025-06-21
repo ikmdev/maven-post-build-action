@@ -31,11 +31,11 @@ inputs:
   gpg_key:
     description: "GPG Key"
     required: true
-  ossrh_username:
-    description: "OSSRH USERNAME"
+  maven_central_username:
+    description: "MAVEN CENTRAL USERNAME"
     required: true
-  ossrh_token:
-    description: "OSSRH Token"
+  maven_central_password:
+    description: "MAVEN CENTRAL PASSWORD"
     required: true
   branch_name: 
     description: "Branch Name" 
@@ -140,7 +140,7 @@ runs:
      - name: Maven Settings File
        uses: whelk-io/maven-settings-xml-action@v22
        with:
-        servers: '[{"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}, {"id": "central", "username": "${{ inputs.ossrh_username }}", "password": "${{ inputs.ossrh_token }}"} ]'
+        servers: '[{"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}, {"id": "central", "username": "${{ inputs.maven_central_username }}", "password": "${{ inputs.maven_central_username }}"} ]'
         profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_tag.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}"}}]'
         active_profiles: '["${{inputs.nexus_profile}}"]' 
         output_file: .m2/settings.xml
@@ -193,7 +193,7 @@ runs:
             -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}' \
             ${{ inputs.mvn_additional_args }}
     
-     - name: Publish To OSSRH (Maven Central Staging)
+     - name: Publish To Maven Central Staging
        shell: bash
        if: steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && !contains(github.event.repository.name, 'komet')
        run: |
@@ -207,8 +207,8 @@ runs:
                   -Dmaven.main.skip \
                   -Dmaven.test.skip \
                   -DrepositoryId=central \
-                  -DrepositoryIdOSSRH='true' \
-                  -PstageOSSRH \
+                  -DrepositoryIdCentralRepository='true' \
+                  -PstageMavenCentralRepository \
                   -Dmaven.build.cache.enabled=false \
                   -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
                   ${{ inputs.mvn_additional_args }}
