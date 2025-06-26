@@ -211,7 +211,7 @@ runs:
                   -DrepositoryIdMavenCentralRepository='true' \
                   -PstageMavenCentralRepository \
                   -Dmaven.build.cache.enabled=false \
-                  -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
+                  # -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
                   ${{ inputs.mvn_additional_args }}
        env:
           MAVEN_USERNAME: ${{ inputs.maven_central_username}}
