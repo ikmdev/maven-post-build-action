@@ -10,7 +10,7 @@ inputs:
   nexus_repo_username:
     description: "Nexus Repository Username" 
     required: false 
-    default: "admin"
+    default: "ike-developer"
   is_tag:
     description: "Check if running on tag"
     required: false
@@ -21,7 +21,7 @@ inputs:
   nexus_repo_url:
     description: "Nexus Repository URL"
     required: false 
-    default: "https://nexus.tinkarbuild.com" 
+    default: "https://nexus.tinkar.org" 
   github_token:
     description: "GitHub Token"
     required: true
