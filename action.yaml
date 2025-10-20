@@ -73,7 +73,7 @@ inputs:
   java_version:
     description: "Java Version"
     required: false
-    default: "24"
+    default: "25"
   mvn_additional_args:
     description: "Additional Maven CLI args (no new lines)"
     required: false
