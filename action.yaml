@@ -155,7 +155,7 @@ runs:
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
             -Dmaven.build.cache.enabled=false \
             -PcodeQuality \
-            -PgenerateData \
+            -P?generateData \
             ${{  steps.is_tag.outputs.RELEASE_ENFORCEMENT  }} \
             ${{ inputs.mvn_additional_args }}
 
