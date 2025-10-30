@@ -141,8 +141,8 @@ runs:
        uses: whelk-io/maven-settings-xml-action@v22
        with:
         servers: '[{"id": "${{ steps.is_tag.outputs.NEXUS_REPO_ID }}", "username": "${{inputs.nexus_repo_username}}", "password": "${{inputs.nexus_repo_password}}"}]'
-        profiles: '[{"id": "${{inputs.nexus_profile}}", "properties": {"altDeploymentRepository": "${{  steps.is_tag.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}"}}]'
-        active_profiles: '["${{inputs.nexus_profile}}"]' 
+        profiles: '[{"id": "defaultDeployProfile", "properties": {"altDeploymentRepository": "${{  steps.is_tag.outputs.NEXUS_REPO_ID  }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}"}}]'
+        active_profiles: '["defaultDeployProfile"]' 
         output_file: .m2/settings.xml
 
      - name: Maven Build
@@ -187,8 +187,8 @@ runs:
             -U \
             -e \
             -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-            -DskipTests \
-            -DskipITs \
+            -DskipTests=true \
+            -DskipITs=true \
             -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
             -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}' \
             ${{ inputs.mvn_additional_args }}
@@ -202,10 +202,10 @@ runs:
                   -e \
                   -U \
                   -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-                  -DskipTests \
-                  -DskipITs \
-                  -Dmaven.main.skip \
-                  -Dmaven.test.skip \
+                  -DskipTests=true \
+                  -DskipITs=true \
+                  -Dmaven.main.skip=true \
+                  -Dmaven.test.skip=true \
                   -DrepositoryId=central \
                   -DrepositoryIdMavenCentralRepository='true' \
                   -PstageMavenCentralRepository \
