@@ -134,7 +134,7 @@ runs:
          fi
        env:
          REPOSITORY_OWNER: ${{github.repository_owner}}
-         TRIGGER_USER: ${{github.actor}}
+         TRIGGER_USER: ${{github.event.head_repository.owner.login}}
         
 
      - name: Maven Settings File
