@@ -210,7 +210,6 @@ runs:
                   -DrepositoryIdMavenCentralRepository='true' \
                   -PstageMavenCentralRepository \
                   -Dmaven.build.cache.enabled=false \
-                  -DaltDeploymentRepository="${{ steps.is_tag.outputs.NEXUS_REPO_ID }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID }}" \
                   ${{ inputs.mvn_additional_args }}
        env:
           MAVEN_USERNAME: ${{ inputs.maven_central_username}}
