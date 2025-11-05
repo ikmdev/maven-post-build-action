@@ -134,11 +134,7 @@ runs:
          fi
        env:
          REPOSITORY_OWNER: ${{github.repository_owner}}
-         TRIGGER_USER: ${{github.event.push.head_repository.owner.login}}
-
-     - name: GitHub Context
-       shell: bash
-       run: echo ${{toJson(github.event)}}
+         TRIGGER_USER: ${{github.event.workflow_run.head_repository.owner.login || github.event.repository.owner.login}}
 
      - name: Maven Settings File
        uses: whelk-io/maven-settings-xml-action@v22
