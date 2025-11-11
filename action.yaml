@@ -204,12 +204,9 @@ runs:
                   -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
                   -DskipTests=true \
                   -DskipITs=true \
-                  -Dmaven.main.skip=true \
-                  -Dmaven.test.skip=true \
                   -DrepositoryId=central \
                   -DrepositoryIdMavenCentralRepository='true' \
                   -PstageMavenCentralRepository \
-                  -Dmaven.build.cache.enabled=false \
                   -Dmaven.deploy.skip=true \
                   ${{ inputs.mvn_additional_args }}
        env:
