@@ -180,6 +180,7 @@ runs:
 
      - name: Deploy To Nexus
        shell: bash
+       if: (!(steps.is_tag.outputs.IS_TAG == 'true' && steps.triggered_by_ikm.outputs.IKM_TRIGGER == 'true' && !contains(github.event.repository.name, 'komet')))
        run: |
           ./mvnw deploy \
             --batch-mode \
@@ -204,10 +205,11 @@ runs:
                   -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
                   -DskipTests=true \
                   -DskipITs=true \
-                  -DrepositoryId=central \
                   -DrepositoryIdMavenCentralRepository='true' \
                   -PstageMavenCentralRepository \
-                  -Dmaven.deploy.skip=true \
+                  -s '/home/runner/work/${{github.event.repository.name}}/${{github.event.repository.name}}/.m2/settings.xml'\
+                  -DrepositoryId='${{ steps.is_tag.outputs.NEXUS_REPO_ID  }}' \
+                  -DaltDeploymentRepository="${{ steps.is_tag.outputs.NEXUS_REPO_ID }}::${{ inputs.nexus_repo_url }}/repository/${{ steps.is_tag.outputs.NEXUS_REPO_ID }}" \
                   ${{ inputs.mvn_additional_args }}
        env:
           MAVEN_USERNAME: ${{ inputs.maven_central_username}}
